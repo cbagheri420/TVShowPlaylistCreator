@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI TV Show Playlist Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI TV Show Playlist Generator</h1>
+            <p class="subtitle">Discover the perfect Spotify playlist for your favorite shows</p>
+        </header>
+        
+        <div class="search-form">
+            <div class="form-group">
+                <label for="show-input">Enter a TV Show:</label>
+                <input type="text" id="show-input" placeholder="e.g., Breaking Bad, The Office, Stranger Things">
+            </div>
+            <div class="form-group">
+                <label for="mood-select">Mood (Optional):</label>
+                <select id="mood-select">
+                    <option value="">Any mood</option>
+                    <option value="energetic">Energetic</option>
+                    <option value="dark">Dark</option>
+                    <option value="upbeat">Upbeat</option>
+                    <option value="emotional">Emotional</option>
+                    <option value="intense">Intense</option>
+                </select>
+            </div>
+            <button id="generate-btn">Generate AI Playlist</button>
+            <div class="error" id="error-message">Please enter a TV show name</div>
+        </div>
+        
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Our AI is creating your perfect playlist...</p>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="show-info">
+                <h2 class="show-name" id="show-name"></h2>
+                <p class="show-description" id="show-description"></p>
+            </div>
+            <h3>Your AI-Curated Playlist:</h3>
+            <ul class="playlist" id="playlist"></ul>
+            
+            <div class="spotify-actions">
+                <button id="spotify-save-btn" class="spotify-btn" disabled>
+                    <img src="spotify-icon.png" alt="Spotify" class="spotify-icon"> Save to Spotify
+                </button>
+                <p class="spotify-note">Connect your Spotify account to save this playlist</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 AI TV Show Playlist Generator</p>
+        <div class="api-credits">
+            <p>Powered by AI and <span class="spotify-text">Spotify</span></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
