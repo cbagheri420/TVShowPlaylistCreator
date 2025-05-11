@@ -1,0 +1,262 @@
+// TV Show Playlist Generator - Main Application JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM element references
+    const generateBtn = document.getElementById('generate-btn');
+    const showInput = document.getElementById('show-input');
+    const moodSelect = document.getElementById('mood-select');
+    const results = document.getElementById('results');
+    const loader = document.getElementById('loader');
+    const showName = document.getElementById('show-name');
+    const showDescription = document.getElementById('show-description');
+    const playlist = document.getElementById('playlist');
+    const errorMessage = document.getElementById('error-message');
+    const spotifyBtn = document.getElementById('spotify-save-btn');
+    
+    // Store the current generated playlist
+    let currentPlaylist = null;
+    
+    // Add event listeners
+    generateBtn.addEventListener('click', handleGeneratePlaylist);
+    showInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleGeneratePlaylist();
+        }
+    });
+    
+    // For Day 1: Mock data and simulated AI generation
+    function handleGeneratePlaylist() {
+        const showTitle = showInput.value.trim();
+        const selectedMood = moodSelect.value;
+        
+        // Validate input
+        if (!showTitle) {
+            errorMessage.classList.add('visible');
+            return;
+        }
+        
+        // Hide error message if visible
+        errorMessage.classList.remove('visible');
+        
+        // Show loader
+        results.classList.remove('visible');
+        loader.classList.add('visible');
+        
+        // Simulate AI processing time
+        setTimeout(() => {
+            generatePlaylistForShow(showTitle, selectedMood);
+            loader.classList.remove('visible');
+            results.classList.add('visible');
+        }, 2000);
+    }
+    
+    // Generate playlist based on TV show and mood
+    function generatePlaylistForShow(showTitle, mood) {
+        // Simulated AI response for Day 1
+        // Note: On Day 2, this will be replaced with actual AI API calls
+        
+        let showData = getShowData(showTitle, mood);
+        
+        // Update UI with show info
+        showName.textContent = showData.name;
+        showDescription.textContent = showData.description;
+        
+        // Clear previous playlist
+        playlist.innerHTML = '';
+        
+        // Store current playlist for later use with Spotify
+        currentPlaylist = showData;
+        
+        // Populate playlist
+        showData.songs.forEach((song, index) => {
+            const songItem = document.createElement('li');
+            songItem.className = 'song-item';
+            songItem.innerHTML = `
+                <div class="song-number">${index + 1}</div>
+                <div class="song-info">
+                    <div class="song-title">${song.title}</div>
+                    <div class="song-artist">${song.artist}</div>
+                    <div class="song-reason">${song.reason}</div>
+                </div>
+            `;
+            playlist.appendChild(songItem);
+        });
+        
+        // Note: For Day 1, the Spotify button remains disabled
+        // It will be activated in Day 3 when we implement Spotify API
+    }
+    
+    // Mock data function - provides sample data for different shows
+    function getShowData(showTitle, mood) {
+        const normalizedTitle = showTitle.toLowerCase();
+        
+        // Default show data structure
+        const defaultShow = {
+            name: capitalizeWords(showTitle),
+            description: "A captivating TV series with a unique storyline and memorable characters.",
+            songs: [
+                {
+                    title: "Simulation Song 1",
+                    artist: "AI Artist",
+                    reason: "This song's tempo and mood match the show's opening sequences."
+                },
+                {
+                    title: "Simulation Song 2",
+                    artist: "Digital Musicians",
+                    reason: "The lyrics of this track reflect the main character's journey."
+                },
+                {
+                    title: "Simulation Song 3",
+                    artist: "Virtual Band",
+                    reason: "This song captures the underlying themes of conflict in the series."
+                },
+                {
+                    title: "Simulation Song 4",
+                    artist: "Algorithm Ensemble",
+                    reason: "The emotional tone mirrors pivotal moments in the show."
+                },
+                {
+                    title: "Simulation Song 5",
+                    artist: "Neural Network Sounds",
+                    reason: "This track embodies the overall aesthetic feeling of the series."
+                }
+            ]
+        };
+        
+        // Sample preset show data - in Day 2 these will be generated by AI
+        const showDatabase = {
+            'breaking bad': {
+                name: 'Breaking Bad',
+                description: 'A high school chemistry teacher turned methamphetamine producer partners with a former student.',
+                songs: [
+                    {
+                        title: 'Baby Blue',
+                        artist: 'Badfinger',
+                        reason: 'Featured in the series finale, perfectly capturing Walter White\'s journey.'
+                    },
+                    {
+                        title: 'Negro y Azul: The Ballad of Heisenberg',
+                        artist: 'Los Cuates de Sinaloa',
+                        reason: 'Written specifically for the show, chronicling Heisenberg\'s growing reputation.'
+                    },
+                    {
+                        title: 'Crystal Blue Persuasion',
+                        artist: 'Tommy James & The Shondells',
+                        reason: 'Used during a montage of Walt and Jesse\'s meth production.'
+                    },
+                    {
+                        title: 'DLZ',
+                        artist: 'TV On The Radio',
+                        reason: 'Plays during Walt\'s "Stay out of my territory" scene, highlighting his transformation.'
+                    },
+                    {
+                        title: 'Out of Time Man',
+                        artist: 'Mick Harvey',
+                        reason: 'Sets the atmospheric tone of the New Mexico desert and Walter\'s limited time.'
+                    }
+                ]
+            },
+            'stranger things': {
+                name: 'Stranger Things',
+                description: 'When a young boy disappears, his mother, a police chief, and his friends must confront terrifying supernatural forces.',
+                songs: [
+                    {
+                        title: 'Should I Stay or Should I Go',
+                        artist: 'The Clash',
+                        reason: 'A recurring song in the show that connects characters across dimensions.'
+                    },
+                    {
+                        title: 'Every Breath You Take',
+                        artist: 'The Police',
+                        reason: 'Featured in the emotional Snow Ball dance scene in Season 2.'
+                    },
+                    {
+                        title: 'Running Up That Hill',
+                        artist: 'Kate Bush',
+                        reason: 'A powerful song that becomes central to a character\'s survival.'
+                    },
+                    {
+                        title: 'Heroes',
+                        artist: 'David Bowie',
+                        reason: 'Captures the heroic spirit of the kids facing supernatural threats.'
+                    },
+                    {
+                        title: 'Never Ending Story',
+                        artist: 'Limahl',
+                        reason: 'A surprising and heartwarming musical moment in Season 3.'
+                    }
+                ]
+            },
+            'the office': {
+                name: 'The Office',
+                description: 'A mockumentary on a group of typical office workers, where the workday consists of ego clashes, inappropriate behavior, and tedium.',
+                songs: [
+                    {
+                        title: '9 to 5',
+                        artist: 'Dolly Parton',
+                        reason: 'The perfect anthem for office life and daily workplace struggles.'
+                    },
+                    {
+                        title: 'Tiny Dancer',
+                        artist: 'Elton John',
+                        reason: 'Memorable from the Dundies episode, capturing the show\'s blend of awkwardness and heart.'
+                    },
+                    {
+                        title: 'Forever',
+                        artist: 'Chris Brown',
+                        reason: 'Featured in Jim and Pam\'s wedding, one of the series\' most emotional moments.'
+                    },
+                    {
+                        title: 'That\'s What I Say',
+                        artist: 'Michael Scott',
+                        reason: 'A humorous nod to Michael\'s catchphrase and DIY musical tendencies.'
+                    },
+                    {
+                        title: 'Goodbye Stranger',
+                        artist: 'Supertramp',
+                        reason: 'Reflects the bittersweet nature of workplace relationships and departures.'
+                    }
+                ]
+            }
+        };
+        
+        // Return the show data if it exists, otherwise return the default
+        return showDatabase[normalizedTitle] || defaultShow;
+    }
+    
+    // Helper function to capitalize words in a string
+    function capitalizeWords(str) {
+        return str.replace(/\b\w/g, l => l.toUpperCase());
+    }
+    
+    // Information to carry over to Day 2:
+    // 1. Replace the mock data generation with AI API calls
+    // 2. Use the TV show name and mood to generate appropriate playlist
+    // 3. Structure the response to match the expected format
+    
+    // Information to carry over to Day 3:
+    // 1. Implement Spotify API integration
+    // 2. Enable the Spotify save button
+    // 3. Add functionality to search and save playlists
+    
+    // Note: Placeholder for Spotify icon - this will be replaced with an actual icon
+    // Create and add a simple placeholder icon until we implement the full functionality
+    function createSpotifyIcon() {
+        const iconPlaceholder = new Image();
+        iconPlaceholder.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjggMTY4Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNODMuOTk2LjI3N0MzNy43NDcuMjc3LjI1MyAzNy43Ny4yNTMgODQuMDE5YzAgNDYuMjUxIDM3LjQ5NCA4My43NDEgODMuNzQzIDgzLjc0MSA0Ni4yNTQgMCA4My43NDQtMzcuNDkgODMuNzQ0LTgzLjc0MSAwLTQ2LjI0Ni0zNy40OS04My43MzgtODMuNzQyLTgzLjczOGwuMDAxLS4wMDR6bTM4LjQwNCAxMjAuNzhhNS4yMTcgNS4yMTcgMCAwMS03LjE3NyAxLjczN2MtMTkuNjYxLTEyLjAxLTQ0LjQxNS0xNC43MzQtNzMuNTUtOC4wNzFhNS4yMjIgNS4yMjIgMCAwMS02LjI0OS0zLjkyNSA1LjIxMyA1LjIxMyAwIDAxMy45MjYtNi4yNDljMzEuOS03LjI4OCA1OS4yNjMtNC4xNSA4MS4zMzcgOS4zMzQgMi40NiAxLjUxIDMuMjQgNC43MiAxLjczIDcuMTc0em0xMC4yNS0yMi43OTljLTEuODk0IDMuMDczLTUuOTEyIDQuMDM3LTguOTgxIDIuMTUtMjIuNTA1LTEzLjgzNC01Ni44MjItMTcuODQxLTgzLjQ0Ny05Ljc1OS0zLjQ1MyAxLjA0My03LjEtLjkwMy04LjE0OC00LjM1YTYuNTM4IDYuNTM4IDAgMDE0LjM1NC04LjE0M2MzMC40MTMtOS4yMjggNjguMjIxLTQuNzU4IDk0LjA3MSAxMS4xMjcgMy4wNyAxLjg5IDQuMDQgNS45MTIgMi4xNSA4Ljk3NnYtLjAwMXptLjg4LTIzLjc0NGMtMjYuOTk5LTE2LjAzMS03MS41Mi0xNy41MDUtOTcuMjg5LTkuNjg0LTQuMTM4IDEuMjU1LTguNTE0LTEuMDgxLTkuNzY4LTUuMjE5YTcuODM1IDcuODM1IDAgMDE1LjIyMS05Ljc3MWMyOS41ODEtOC45OCA3OC43NTYtNy4yNDUgMTA5Ljgz IDExLjIwMmE3LjgyMyA3LjgyMyAwIDAxMi43NCAxMC43MzNjLTIuMiAzLjcyMi03LjAyIDQuOTQ5LTEwLjczIDIuNzR6Ii8+PC9zdmc+';
+        iconPlaceholder.alt = 'Spotify';
+        iconPlaceholder.className = 'spotify-icon';
+        
+        const icons = document.querySelectorAll('.spotify-icon');
+        icons.forEach(icon => {
+            icon.src = iconPlaceholder.src;
+        });
+    }
+    
+    // Initialize the page
+    function init() {
+        createSpotifyIcon();
+    }
+    
+    // Run initialization
+    init();
+});
