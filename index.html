@@ -3,65 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI TV Show Playlist Generator</title>
+    <title>TV Show Playlist Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>AI TV Show Playlist Generator</h1>
-            <p class="subtitle">Discover the perfect Spotify playlist for your favorite shows</p>
+            <h1>TV Show Playlist Generator</h1>
+            <div class="spotify-auth">
+                <div id="user-profile"></div>
+                <button id="spotify-login-btn" class="spotify-button">
+                    <img class="spotify-icon" alt="Spotify"> 
+                    Login with Spotify
+                </button>
+            </div>
         </header>
         
-        <div class="search-form">
-            <div class="form-group">
-                <label for="show-input">Enter a TV Show:</label>
-                <input type="text" id="show-input" placeholder="e.g., Breaking Bad, The Office, Stranger Things">
-            </div>
-            <div class="form-group">
-                <label for="mood-select">Mood (Optional):</label>
-                <select id="mood-select">
-                    <option value="">Any mood</option>
-                    <option value="energetic">Energetic</option>
-                    <option value="dark">Dark</option>
-                    <option value="upbeat">Upbeat</option>
-                    <option value="emotional">Emotional</option>
-                    <option value="intense">Intense</option>
-                </select>
-            </div>
-            <button id="generate-btn">Generate AI Playlist</button>
-            <div class="error" id="error-message">Please enter a TV show name</div>
-        </div>
-        
-        <div class="loader" id="loader">
-            <div class="spinner"></div>
-            <p>Our AI is creating your perfect playlist...</p>
-        </div>
-        
-        <div class="results" id="results">
-            <div class="show-info">
-                <h2 class="show-name" id="show-name"></h2>
-                <p class="show-description" id="show-description"></p>
-            </div>
-            <h3>Your AI-Curated Playlist:</h3>
-            <ul class="playlist" id="playlist"></ul>
+        <main>
+            <section class="input-section">
+                <div class="input-group">
+                    <label for="show-input">TV Show:</label>
+                    <input type="text" id="show-input" placeholder="Enter a TV show name (e.g., 'Breaking Bad')">
+                </div>
+                
+                <div class="input-group">
+                    <label for="mood-select">Mood:</label>
+                    <select id="mood-select">
+                        <option value="mixed">Mixed (General Playlist)</option>
+                        <option value="energetic">Energetic</option>
+                        <option value="emotional">Emotional</option>
+                        <option value="dark">Dark & Intense</option>
+                        <option value="uplifting">Uplifting</option>
+                        <option value="nostalgic">Nostalgic</option>
+                    </select>
+                </div>
+                
+                <button id="generate-btn" class="primary-button">Generate Playlist</button>
+            </section>
             
-            <div class="spotify-actions">
-                <button id="spotify-save-btn" class="spotify-btn" disabled>
-                    <img src="spotify-icon.png" alt="Spotify" class="spotify-icon"> Save to Spotify
-                </button>
-                <p class="spotify-note">Connect your Spotify account to save this playlist</p>
+            <div id="error-message"></div>
+            
+            <div id="loader" class="loader">
+                <div class="loading-animation"></div>
+                <p>Curating your playlist...</p>
             </div>
-        </div>
+            
+            <section id="results" class="results">
+                <div class="show-info">
+                    <h2 id="show-name"></h2>
+                    <p id="show-description"></p>
+                </div>
+                
+                <div class="playlist-container">
+                    <h3>Playlist</h3>
+                    <ul id="playlist" class="playlist"></ul>
+                    
+                    <div class="playlist-actions">
+                        <button id="spotify-save-btn" class="spotify-button" disabled>
+                            <img class="spotify-icon" alt="Spotify">
+                            Save to Spotify
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Created by Your Name | Powered by OpenAI and Spotify</p>
+            <p class="disclaimer">This app may generate playlists with varying accuracy based on AI analysis of your TV show.</p>
+        </footer>
     </div>
-    
-    <footer>
-        <p>&copy; 2025 AI TV Show Playlist Generator</p>
-        <div class="api-credits">
-            <p>Powered by AI and <span class="spotify-text">Spotify</span></p>
-        </div>
-    </footer>
-
-    <script src="app.js"></script>
 </body>
 </html>
