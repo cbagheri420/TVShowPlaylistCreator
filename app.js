@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPlaylist = null;
     
     // Initialize API clients
-    const playlistGenerator = new PlaylistGenerator('YOUR_OPENAI_API_KEY');
+    // Note: For front-end use, we're initializing PlaylistGenerator without API key
+    // as it will be handled through environment variables on the server side
+    const playlistGenerator = new PlaylistGenerator();
     const spotifyApi = new SpotifyAPI();
     
     // Add event listeners
@@ -70,9 +72,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return artist ? `${title} ${artist}` : title;
             });
             
-            // Create playlist name based on show
-            const playlistName = `${currentPlaylist.show} Themed Playlist`;
-            const description = `AI-generated playlist inspired by ${currentPlaylist.show}. Created with TV Show Playlist Generator.`;
+            // Create playlist name based on show and mood
+            const selectedMood = moodSelect.value;
+            const playlistName = `${currentPlaylist.show} ${capitalizeWords(selectedMood)} Playlist`;
+            const description = `AI-generated ${selectedMood} playlist inspired by ${currentPlaylist.show}. Created with TV Show Playlist Generator.`;
             
             // Create the playlist on Spotify
             const result = await spotifyApi.createPlaylistFromSongs(
@@ -117,17 +120,39 @@ document.addEventListener('DOMContentLoaded', function() {
         loader.classList.add('visible');
         
         try {
-            // Estimate token usage before making the call
-            const costEstimate = playlistGenerator.estimateTokenUsage(showTitle);
-            console.log(`Estimated Token Usage: ${costEstimate.estimatedTokens}`);
-            console.log(`Estimated Cost: $${costEstimate.estimatedCost.toFixed(4)}`);
+            // Backend API call to generate playlist
+            // For front-end demo or API key protection, we might need to proxy this request
+            // through a server endpoint instead of calling PlaylistGenerator directly
+            const apiEndpoint = '/api/generate-playlist';
             
-            // Generate playlist using AI
-            const playlistResult = await playlistGenerator.generatePlaylist(showTitle, selectedMood);
+            // Make request to our backend endpoint
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    show: showTitle,
+                    mood: selectedMood
+                }),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+            
+            const playlistResult = await response.json();
+            
+            // Fallback for development - direct client-side generation
+            // In production, you'd want to remove this and use only the server endpoint
+            /* 
+            // Direct playlistGenerator call (remove in production)
+            const playlistResult = await playlistGenerator.generatePlaylist(showTitle);
+            */
             
             // Update UI with show info
             showName.textContent = playlistResult.show;
-            showDescription.textContent = `Generated playlist for ${playlistResult.show} (${playlistResult.genre} genre)`;
+            showDescription.textContent = `Generated ${selectedMood} playlist for ${playlistResult.show} (${playlistResult.genre} genre)`;
             
             // Clear previous playlist
             playlist.innerHTML = '';
@@ -334,14 +359,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create Spotify icon
     function createSpotifyIcon() {
-        const iconPlaceholder = new Image();
-        iconPlaceholder.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjggMTY4Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNODMuOTk2LjI3N0MzNy43NDcuMjc3LjI1MyAzNy43Ny4yNTMgODQuMDE5YzAgNDYuMjUxIDM3LjQ5NCA4My43NDEgODMuNzQzIDgzLjc0MSA0Ni4yNTQgMCA4My43NDQtMzcuNDkgODMuNzQ0LTgzLjc0MSAwLTQ2LjI0Ni0zNy40OS04My43MzgtODMuNzQyLTgzLjczOGwuMDAxLS4wMDR6bTM4LjQwNCAxMjAuNzhhNS4yMTcgNS4yMTcgMCAwMS03LjE3NyAxLjczN2MtMTkuNjYxLTEyLjAxLTQ0LjQxNS0xNC43MzQtNzMuNTUtOC4wNzFhNS4yMjIgNS4yMjIgMCAwMS02LjI0OS0zLjkyNSA1LjIxMyA1LjIxMyAwIDAxMy45MjYtNi4yNDljMzEuOS03LjI4OCA1OS4yNjMtNC4xNSA4MS4zMzcgOS4zMzQgMi40NiAxLjUxIDMuMjQgNC43MiAxLjczIDcuMTc0em0xMC4yNS0yMi43OTljLTEuODk0IDMuMDczLTUuOTEyIDQuMDM3LTguOTgxIDIuMTUtMjIuNTA1LTEzLjgzNC01Ni44MjItMTcuODQxLTgzLjQ0Ny05Ljc1OS0zLjQ1MyAxLjA0My03LjEtLjkwMy04LjE0OC00LjM1YTYuNTM4IDYuNTM4IDAgMDE0LjM1NC04LjE0M2MzMC40MTMtOS4yMjggNjguMjIxLTQuNzU4IDk0LjA3MSAxMS4xMjcgMy4wNyAxLjg5IDQuMDQgNS45MTIgMi4xNSA4Ljk3NnYtLjAwMXptLjg4LTIzLjc0NGMtMjYuOTk5LTE2LjAzMS03MS41Mi0xNy41MDUtOTcuMjg5LTkuNjg0LTQuMTM4IDEuMjU1LTguNTE0LTEuMDgxLTkuNzY4LTUuMjE5YTcuODM1IDcuODM1IDAgMDE1LjIyMS05Ljc3MWMyOS41ODEtOC45OCA3OC43NTYtNy4yNDUgMTA5LjgzIDExLjIwMmE3LjgyMyA3LjgyMyAwIDAxMi43NCAxMC43MzNjLTIuMiAzLjcyMi03LjAyIDQuOTQ5LTEwLjczIDIuNzR6Ii8+PC9zdmc+';
-        iconPlaceholder.alt = 'Spotify';
-        iconPlaceholder.className = 'spotify-icon';
+        const spotifyIconSvg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjggMTY4Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNODMuOTk2LjI3N0MzNy43NDcuMjc3LjI1MyAzNy43Ny4yNTMgODQuMDE5YzAgNDYuMjUxIDM3LjQ5NCA4My43NDEgODMuNzQzIDgzLjc0MSA0Ni4yNTQgMCA4My43NDQtMzcuNDkgODMuNzQ0LTgzLjc0MSAwLTQ2LjI0Ni0zNy40OS04My43MzgtODMuNzQyLTgzLjczOGwuMDAxLS4wMDR6bTM4LjQwNCAxMjAuNzhhNS4yMTcgNS4yMTcgMCAwMS03LjE3NyAxLjczN2MtMTkuNjYxLTEyLjAxLTQ0LjQxNS0xNC43MzQtNzMuNTUtOC4wNzFhNS4yMjIgNS4yMjIgMCAwMS02LjI0OS0zLjkyNSA1LjIxMyA1LjIxMyAwIDAxMy45MjYtNi4yNDljMzEuOS03LjI4OCA1OS4yNjMtNC4xNSA4MS4zMzcgOS4zMzQgMi40NiAxLjUxIDMuMjQgNC43MiAxLjczIDcuMTc0em0xMC4yNS0yMi43OTljLTEuODk0IDMuMDczLTUuOTEyIDQuMDM3LTguOTgxIDIuMTUtMjIuNTA1LTEzLjgzNC01Ni44MjItMTcuODQxLTgzLjQ0Ny05Ljc1OS0zLjQ1MyAxLjA0My03LjEtLjkwMy04LjE0OC00LjM1YTYuNTM4IDYuNTM4IDAgMDE0LjM1NC04LjE0M2MzMC40MTMtOS4yMjggNjguMjIxLTQuNzU4IDk0LjA3MSAxMS4xMjcgMy4wNyAxLjg5IDQuMDQgNS45MTIgMi4xNSA4Ljk3NnYtLjAwMXptLjg4LTIzLjc0NGMtMjYuOTk5LTE2LjAzMS03MS41Mi0xNy41MDUtOTcuMjg5LTkuNjg0LTQuMTM4IDEuMjU1LTguNTE0LTEuMDgxLTkuNzY4LTUuMjE5YTcuODM1IDcuODM1IDAgMDE1LjIyMS05Ljc3MWMyOS41ODEtOC45OCA3OC43NTYtNy4yNDUgMTA5LjgzIDExLjIwMmE3LjgyMyA3LjgyMyAwIDAxMi43NCAxMC43MzNjLTIuMiAzLjcyMi03LjAyIDQuOTQ5LTEwLjczIDIuNzR6Ii8+PC9zdmc+';
         
         const icons = document.querySelectorAll('.spotify-icon');
         icons.forEach(icon => {
-            icon.src = iconPlaceholder.src;
+            icon.src = spotifyIconSvg;
         });
     }
     
@@ -349,6 +371,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function init() {
         createSpotifyIcon();
         updateSpotifyLoginState();
+        
+        // Check if we're returning from Spotify auth
+        if (window.location.hash.includes('access_token')) {
+            showSuccess('Successfully connected to Spotify!');
+            updateSpotifyLoginState();
+        }
     }
     
     // Run initialization
